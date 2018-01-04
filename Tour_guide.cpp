@@ -29,7 +29,6 @@ public:
 
 typedef struct 
 {
-    //string vex[100]; //顶点表
     vector < string > vex;
     int arc[100][100]; //邻接矩阵
     int numVertexes; //图中当前顶点数
@@ -40,11 +39,17 @@ class school_map    //地图
 public:
     school_map();
     ~school_map() { delete M; }
+    int find_vex( string str );
     void menu( int flag );
     void prim();
     void dijkstra();
     void DFS( int i );
     void DFSTraverse();
+    void Shortest();
+    void all_path();
+    void dfs_all( int v1,int v2 );
+    void add_place();
+    void del_place();
 private:
     MGraph *M;
     bool visited[ MAXVEX ];
@@ -156,7 +161,7 @@ void login :: sign_up() //注册
     fileout.close();
 }
 
-school_map :: school_map()  //从文件读取地图 初始化邻接矩阵
+school_map :: school_map()  //构造函数 从文件读取地图 初始化邻接矩阵
 {
     M = new MGraph;
     int i,j,k;
@@ -182,7 +187,7 @@ school_map :: school_map()  //从文件读取地图 初始化邻接矩阵
     }
 }
 
-void school_map :: DFSTraverse()
+void school_map :: DFSTraverse() 
 {
     int i;
     for( i = 0;i < M->numVertexes;i++ )
@@ -199,6 +204,18 @@ void school_map :: DFSTraverse()
     cout << endl;
 }
 
+int school_map :: find_vex( string str )
+{
+    int i;
+    for( i = 0;i < M->numVertexes;i++ )
+    {
+        if( str == M->vex[i] )
+        {
+            return i;
+        }
+    }
+    return -1;
+}
 void school_map :: DFS( int i )
 {
     int j;
@@ -253,39 +270,41 @@ void school_map :: prim()   //最短连通图
     cout << endl;
 }
 
+struct Path 
+{
+    int vertex, dist;
+    string path;
+};
+
+struct PathLess 
+{
+    bool operator()(const Path &a, const Path &b)
+    {
+        return a.dist > b.dist;
+    }
+};
+
 void school_map :: dijkstra()    //最短路径
 {
     string str1,str2;
     cout << "输入起始点:\n";
     cin >> str1 >> str2;
-    struct Path
-    {
-        int vertex, dist;
-        string path;
-    };
-
-    struct PathLess
-    {
-        bool operator()(const Path &a, const Path &b)
-        {
-            return a.dist > b.dist;
-        }
-    };
     
-
     int v0,v1;
     int v,w,k,min,i;
 
-    for( i = 0;i < M->numVertexes;i++ )
+    v0 = find_vex( str1 );
+    if( v0 == -1 )
     {
-        if( str1 == M->vex[i] )
-        {
-            v0 = i;
-        }
-        if( str2 == M->vex[i] )
-        {
-            v1 = i;
-        }
+        cout << "无此地点\n";
+        return ;
+    }
+
+    v1 = find_vex( str2 );
+    if( v1 == -1 )
+    {
+        cout << "无此地点\n";
+        return ;
     }
     
     priority_queue<Path, vector<Path>, PathLess> Q;
@@ -318,9 +337,8 @@ void school_map :: menu( int flag )    //选项菜单
          << "2.查看最短连通图\n"
          << "3.查看两点间最短路径\n"
          << "4.查看两点间所有简单路径\n"
-         << "5.查询某地点信息\n"
-         << "6.增加地点\n"
-         << "7.删除地点\n";
+         << "5.增加地点\n"
+         << "6.删除地点\n";
     cout << "输入选项：" << endl; 
     cin >> choose;
     while( choose != "0" )
@@ -335,28 +353,240 @@ void school_map :: menu( int flag )    //选项菜单
         }
         if( choose == "3" )
         {
+            cout << "最短权值路径：\n";
             dijkstra();
+            cout << "\n最少中转次数路径：\n";
+            Shortest();
         }
         if( choose == "4" )
         {
-            
+           all_path(); 
         }
         if( choose == "5" )
         {
-
+            if( flag != 1 )
+            {
+                cout << "缺少权限" << endl;
+            }
+            else
+            {
+                add_place();
+            }
         }
         if( choose == "6" )
         {
-            
-        }
-        if( choose == "7" )
-        {
-
+            if( flag != 1 )
+            {
+                cout << "缺少权限" << endl;
+            }
+            else
+            {
+                del_place();
+            }
         }
         cout << '\n' << "输入选项:" << endl;
         cin >> choose;
     
     }
+}
+
+struct pathtable
+{
+    int num;
+    vector < int > path;
+};
+void school_map :: Shortest()   //最短中转路径
+{
+    int book[ M->numVertexes ] = { 0 };
+    int i,j,v1,v2;
+    queue < pathtable> Q;
+    string str1,str2;
+    cout << "输入起始点：\n";
+    cin >> str1 >> str2;
+    
+    v1 = find_vex( str1 );
+    if( v1 == -1 )
+    {
+        cout << "无此地点\n";
+        return ;
+    }
+    v2 = find_vex( str2 );
+    if( v2 == -1 )
+    {
+        cout << "无此地点\n";
+        return ;
+    }
+    
+    pathtable place1,place2;
+    place1.num = v1;
+    place1.path.push_back( v1 );
+    Q.push( place1 );   //起点进去队列
+    book[ v1 ] = 1;
+    j = v1;
+    place2 = Q.front();
+    while( 1 )
+    {
+        for( i = 0;i < M->numVertexes;i++ )
+        {
+            if( M->arc[j][i] != INFINITY && book[i] == 0 )  //如果连通且尚未入队
+            {
+                book[ i ] = 1;
+                place1.num = i;
+                place1.path = place2.path;
+                place1.path.push_back( i );
+                Q.push( place1 );
+
+                if( place1.num == v2 )  //到达终点
+                {
+                    for( int i : place1.path )
+                    {
+                        cout << M->vex[i] << ' ';
+                    }
+                    cout << endl;
+                    return ;
+                }
+            }
+        }
+        Q.pop();    //队头出队
+        place2 = Q.front();
+        j = place2.num;
+    }
+}
+
+int book[100];
+vector < int > V;
+void school_map :: all_path()   //所有简单路径
+{
+    book[100] = {0};
+    string str1,str2;
+    int v1,v2;
+    cout << "输入起始点：\n";
+    cin >> str1 >> str2;
+
+    v1 = find_vex( str1 );
+    if( v1 == -1 )
+    {
+        cout << "无此地点\n";
+        return ;
+    }
+    v2 = find_vex( str2 );
+    if( v2 == -1 )
+    {
+        cout << "无此地点\n";
+        return ;
+    }
+    dfs_all( v1,v2 );
+
+}
+
+void school_map :: dfs_all( int v1,int v2 )
+{
+    int i,j;
+    V.push_back( v1 );
+    book[ v1 ] = 1;
+    if( v1 == v2 )
+    {
+        for( int i : V )
+        {
+            cout << M->vex[i] << ' ';
+        }
+        cout << endl;
+    }
+    else 
+    {
+        for( i = 0;i < M->numVertexes;i++ )
+        {
+            if( M->arc[ v1 ][i] != INFINITY && book[i] == 0 )
+            {
+                dfs_all( i,v2 );
+            }
+        }
+    }
+    book[ v1 ] = 0;
+    v1--;
+    V.pop_back();
+
+}
+
+void school_map :: add_place()  //添加地点
+{
+    ofstream fileout( "school_map" );
+    if( !fileout.is_open() )
+    {
+         cout << "add_place-opening error\n";
+        return ;
+    }
+    string str;
+    cout << "输入新地点名称：\n";
+    cin >> str;
+    M->vex.push_back( str );
+    M->numVertexes++;
+    cout << M->numVertexes << "asasasas\n";
+    cout << "输入该地点与各地联系：\n";
+    for( int i = 0;i < M->numVertexes;i++ )
+    {
+        cin >> M->arc[ M->numVertexes-1 ][i];
+        M->arc[i][ M->numVertexes-1 ] = M->arc[ M->numVertexes-1 ][i];
+    }
+    fileout << M->numVertexes;
+    fileout << '\n';
+    for( int i = 0;i < M->numVertexes;i++ )
+    {
+        fileout << M->vex[i];
+        fileout << ' ';
+    }
+    fileout << '\n';
+    for( int i = 0;i < M->numVertexes;i++ )
+    {
+        for( int j = 0;j < M->numVertexes;j++ )
+        {
+            if( M->arc[i][j] != INFINITY )
+            {
+                fileout << i << ' ' << j << ' ' << M->arc[i][j] << '\n'; 
+            }
+        }
+    }
+    fileout.close();
+}
+
+void school_map :: del_place()  //删除地点
+{
+    ofstream fileout( "school_map" );
+    string str;
+    cout << "输入地点：\n";
+    cin >> str;
+    int v = find_vex( str );
+    if( v == -1 )
+    {
+        cout << "无此地点\n";
+        return ;
+    }
+    for( int i = 0;i < M->numVertexes;i++ )
+    {
+        M->arc[v][i] = INFINITY;
+        M->arc[i][v] = INFINITY;
+    }
+    M->vex.erase( M->vex.begin()+v );
+    fileout << M->numVertexes-1;
+    fileout << '\n';
+    for( string str : M->vex )
+    {
+        fileout << str;
+        fileout << ' ';
+    }
+    fileout << '\n';
+    cout << "M->numVertexes === " << M->numVertexes << endl;//////
+    for( int i = 0;i < M->numVertexes;i++ )
+    {
+        for( int j = 0;j < M->numVertexes;j++ )
+        {
+            if( M->arc[i][j] != INFINITY )
+                fileout << i << ' ' << j << ' ' << M->arc[i][j] << '\n';
+        }
+    }
+    M->numVertexes--;
+    fileout.close();
+
 }
 
 int main()
