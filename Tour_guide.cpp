@@ -50,6 +50,7 @@ public:
     void dfs_all( int v1,int v2 );
     void add_place();
     void del_place();
+    void update();
 private:
     MGraph *M;
     bool visited[ MAXVEX ];
@@ -76,7 +77,7 @@ int login :: log_in()   //登录
             cin >> name;
             cout << "\n输入密码：\n";
             cin >> code;
-            if( name == "111111" && code == "000000" )
+            if( name == "111" && code == "000" )
             {
                 return 1;
             }
@@ -161,9 +162,12 @@ void login :: sign_up() //注册
     fileout.close();
 }
 
-school_map :: school_map()  //构造函数 从文件读取地图 初始化邻接矩阵
+school_map :: school_map()  //构造函数
 {
     M = new MGraph;
+}
+void school_map :: update()     //更新
+{
     int i,j,k;
     string tmp;
     ifstream filein( "school_map" ); //打开文件
@@ -185,9 +189,10 @@ school_map :: school_map()  //构造函数 从文件读取地图 初始化邻接
         M->arc[i][j] = k;
         M->arc[j][i] = k;
     }
+    filein.close();
 }
 
-void school_map :: DFSTraverse() 
+void school_map :: DFSTraverse() //调用DFS
 {
     int i;
     for( i = 0;i < M->numVertexes;i++ )
@@ -204,7 +209,7 @@ void school_map :: DFSTraverse()
     cout << endl;
 }
 
-int school_map :: find_vex( string str )
+int school_map :: find_vex( string str )    //返回地点下标
 {
     int i;
     for( i = 0;i < M->numVertexes;i++ )
@@ -216,7 +221,7 @@ int school_map :: find_vex( string str )
     }
     return -1;
 }
-void school_map :: DFS( int i )
+void school_map :: DFS( int i )     //DFS
 {
     int j;
     visited[i] = true;
@@ -270,11 +275,17 @@ void school_map :: prim()   //最短连通图
     cout << endl;
 }
 
+
 struct Path 
 {
     int vertex, dist;
     string path;
+/*    friend bool operator () (const Path &a, const Path &b) {
+        return a.dist > b.dist;
+    }*/
 };
+
+
 
 struct PathLess 
 {
@@ -284,7 +295,7 @@ struct PathLess
     }
 };
 
-void school_map :: dijkstra()    //最短路径
+void school_map :: dijkstra()    //权值和最短路径
 {
     string str1,str2;
     cout << "输入起始点:\n";
@@ -306,7 +317,7 @@ void school_map :: dijkstra()    //最短路径
         cout << "无此地点\n";
         return ;
     }
-    
+    //priority_queue <Path, vector<Path>> Q;
     priority_queue<Path, vector<Path>, PathLess> Q;
     Q.push({v0, 0, M->vex[v0]});
 
@@ -338,7 +349,8 @@ void school_map :: menu( int flag )    //选项菜单
          << "3.查看两点间最短路径\n"
          << "4.查看两点间所有简单路径\n"
          << "5.增加地点\n"
-         << "6.删除地点\n";
+         << "6.删除地点\n"
+         << "7.查看地图\n";
     cout << "输入选项：" << endl; 
     cin >> choose;
     while( choose != "0" )
@@ -382,7 +394,12 @@ void school_map :: menu( int flag )    //选项菜单
             else
             {
                 del_place();
+                update();
             }
+        }
+        if( choose == "7" )
+        {
+            system( "eog map1.jpg" );
         }
         cout << '\n' << "输入选项:" << endl;
         cin >> choose;
@@ -521,7 +538,6 @@ void school_map :: add_place()  //添加地点
     cin >> str;
     M->vex.push_back( str );
     M->numVertexes++;
-    cout << M->numVertexes << "asasasas\n";
     cout << "输入该地点与各地联系：\n";
     for( int i = 0;i < M->numVertexes;i++ )
     {
@@ -575,13 +591,19 @@ void school_map :: del_place()  //删除地点
         fileout << ' ';
     }
     fileout << '\n';
-    cout << "M->numVertexes === " << M->numVertexes << endl;//////
     for( int i = 0;i < M->numVertexes;i++ )
     {
         for( int j = 0;j < M->numVertexes;j++ )
         {
             if( M->arc[i][j] != INFINITY )
-                fileout << i << ' ' << j << ' ' << M->arc[i][j] << '\n';
+            {
+                if( i > v )
+                    fileout << i-1 << ' ' << j << ' ' << M->arc[i][j] << '\n';
+                else if( j > v )
+                    fileout << i << ' ' << j-1 << ' ' << M->arc[i][j] << '\n';
+                else
+                    fileout << i << ' ' << j << ' ' << M->arc[i][j] << '\n';
+            }
         }
     }
     M->numVertexes--;
@@ -600,6 +622,7 @@ int main()
     }
     
     school_map map;
+    map.update();
     map.menu( flag );
 }
 
