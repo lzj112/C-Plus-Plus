@@ -69,6 +69,7 @@ struct buffer
 };
 void TcpTest :: Run() 
 {
+    int ret;
     string judge;
     buffer tmp; 
     bzero( &tmp.buf, sizeof(tmp.buf) );
@@ -103,9 +104,13 @@ void TcpTest :: Run()
         }
         if ( tmp.number > 0 && tmp.number < 6 ) 
         {
-            send( sock, (void *)&tmp, sizeof(tmp), MSG_WAITALL );
+            ret = send( sock, (void *)&tmp, sizeof(tmp), MSG_WAITALL );
         }
         bzero( &tmp, sizeof(tmp) );
+        if ( ret >= 0 ) 
+        {
+            cout << "发送数据" << ret << endl;
+        }
     }
 }
 
