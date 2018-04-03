@@ -48,7 +48,7 @@ void node::setChildren(node *children_l, node *children_r)
     children[0] = children_l;
     children[1] = children_r;
 } 
-node* node::getSibling() 
+node* node::getSibling() //是左孩子得到右孩子，是右孩子得到左孩子
 {
     //得到该节点的父节点
     node* parent = getParent();

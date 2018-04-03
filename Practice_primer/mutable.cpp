@@ -3,7 +3,7 @@ using namespace std;
 class tmp 
 {
 private:
-    mutable int count;
+    mutable int count; //声明一个可变的变量，
 public:
     tmp()
     {
@@ -15,7 +15,7 @@ public:
         cout << count << endl;
     }
 };
-void tmp :: change() const
+void tmp :: change() const //即使在const函数中 也可以改变
 {
     count++;
 }
