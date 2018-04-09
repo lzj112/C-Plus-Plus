@@ -38,13 +38,14 @@ int main()
 
     cout << "Check if: " << check_str << " is contained in tree " << endl;
 
+    //验证有无这个节点 树有无改变
     if (ntree.verify(check_str)) 
     {
         cout << "All clear\n";
     }
     else 
     {
-        cout << "Nope something is wrong\n";
+        cout << "something is wrong\n";
     }
     return 0;
 }
