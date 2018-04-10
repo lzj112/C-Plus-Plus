@@ -1,3 +1,5 @@
+//大数相加减乘
+#include <iostream>
 #include <string>
 #include <vector>
 using namespace std;
@@ -7,22 +9,21 @@ private:
     string number;
 public:
     infint() {}
-    infint(int tmp) { number = tmp; }
-    infint(string tmp) { number = tmp; }
+    infint(string tmp) { number = tmp;}
     ~infint() {}
     string BigInegerAdd(string s1, string s2); //相加
     string BigInegerMinus(string s1, string s2, bool negative); //相减
     string BigIneger(string s1, string s2);//判断
     string BigMutiple(string s1, string s2);//相乘
-    string operator+(infint& b);
-    string operator-(infint& b);
-    string operator++();
-    string operator+=(infint& b);
-    string operator-=(infint& b);
-    string operator*(infint& b);
-    string operator*=(infint& b);
-    string operator=(infint& b);
-    friend ostream& operator<<(ostream& out, infint& b); 
+    infint operator+(infint& b);
+    infint operator-(infint& b);
+    infint operator++();
+    infint operator+=(infint& b);
+    infint operator-=(infint& b);
+    infint operator*(infint& b);
+    infint operator*=(infint& b);
+    infint operator=(infint b);
+    friend ostream& operator<<(ostream& out, infint b); 
 };
 string infint::BigInegerAdd(string s1, string s2) // s1+s2;
 {
@@ -80,18 +81,18 @@ string infint::BigInegerAdd(string s1, string s2) // s1+s2;
 
 }
 
-//negative == true means s1 < s2
+//negative == true 意味着s1 < s2
 string infint::BigInegerMinus(string s1, string s2, bool negative) // s1-s2; 
 {
 
 	if (s1.size() < s2.size())
 	{
-		return BigInegerMinus(s2, s1, true);
+		return BigInegerMinus(s2, s1, true); 
 	}
 	if (s1.size() == s2.size())
 	{
 		int i = 0;
-		while(i < s1.size() && s1[i] == s2[i])
+		while(i < s1.size() && s1[i] == s2[i]) //两个数位数相等 将大的调到s1的位置
 			i++;
 		if (s1[i] < s2[i])
 		{
@@ -112,7 +113,8 @@ string infint::BigInegerMinus(string s1, string s2, bool negative) // s1-s2;
 			sum += 10;
 			res[k--] = sum + '0';
 		}
-		else{
+		else
+		{
 			borrow = 0;
 			res[k--] = sum + '0';
 		}
@@ -127,14 +129,15 @@ string infint::BigInegerMinus(string s1, string s2, bool negative) // s1-s2;
 			sum += 10;
 			res[k--] = sum + '0';
 		}
-		else{
+		else
+		{
 			borrow = 0;
 			res[k--] = sum + '0';
 		}
 	}
 	if (res[0] == '0')
-	{
-		//ignore the prefix '0's
+	{  
+		//如果打头元素减为0 忽略
 		int index = 1;
 		while(index < res.size() && res[index] == '0')
 			index++;
@@ -142,18 +145,21 @@ string infint::BigInegerMinus(string s1, string s2, bool negative) // s1-s2;
 		{
 			return "-" + res.substr(index, res.size() - index);
 		}
-		else return res.substr(index, res.size() - index);
+		else 
+			return res.substr(index, res.size() - index);
 	}
-	else {
+	else 
+	{
 		if (negative)
 		{
 			return "-" + res;
 		}
-		else return res;
+		else 
+			return res;
 	}
 }
 
-string infint::BigIneger(string s1, string s2)
+string infint::BigIneger(string s1, string s2) //判断
 {
 	if (s1 == "")
 	{
@@ -196,9 +202,10 @@ string infint::BigIneger(string s1, string s2)
 	}
 }
 
-string infint::BigMutiple(string s1, string s2)
+string infint::BigMutiple(string s1, string s2)//相乘
 {
 
+cout << "s1 s2 " << s1 << ' ' << s2 << endl;
     string res="";
     //两个数的位数
     int m = s1.size(), n = s2.size();
@@ -207,81 +214,121 @@ string infint::BigMutiple(string s1, string s2)
     vector<long long> tmp(m + n - 1);
 
     //每一位进行笛卡尔乘法
-    for (int i = 0; i < m; i++){
+    for (int i = 0; i < m; i++)
+	{
          int a = s1[i] - '0';
-        for (int j = 0; j < n; j++){
+        for (int j = 0; j < n; j++)
+		{
             int b = s2[j] - '0';
             tmp[i + j] += a*b;
         }
     }
     //进行进位处理，注意左侧是大右侧是小
     int carry = 0;
-    for (int i = tmp.size() - 1; i >= 0; i--){
+    for (int i = tmp.size() - 1; i >= 0; i--)
+	{
         int t = tmp[i] + carry;
         tmp[i] = t % 10;
         carry = t / 10;
     }
     //若遍历完仍然有进位
-    while (carry != 0){
+    while (carry != 0)
+	{
         int t = carry % 10;
         carry /= 10;
         tmp.insert(tmp.begin(), t);
     }
     //将结果存入到返回值中
-    for (auto a : tmp){
+    for (auto a : tmp)
+	{
         res = res + to_string(a);
     }
-    if(res.size()>0&&res[0]=='0')return "0";
+    if(res.size()>0&&res[0]=='0')
+		return "0";
+
     return res;
 
 }
-string infint::operator+(infint& b) 
+infint infint::operator+(infint& b) 
 {
-    return BigIneger(number, b.number);
+    infint tmp(BigIneger(number, b.number));
+	return tmp;
 }
 
-string infint::operator-(infint& b) 
+infint infint::operator-(infint& b) 
 {
-    return BigIneger(number, b.number);
-}
-string infint::operator++() 
-{
-    return BigIneger(number, number);
-}
-
-string infint::operator+=(infint& b) 
-{
-    return BigIneger(number, b.number);
-}
-
-string infint::operator-=(infint& b) 
-{
-    return BigIneger(number, b.number);
+	if (b.number[0] != '-' && number[0] != '-') 
+	{
+		string t = "-" + b.number;
+		infint tmp(BigIneger(number, t));
+		return tmp;
+	}
+	else 
+    {
+		infint tmp(BigIneger(number, b.number));
+		return tmp;
+	}
 }
 
-string infint::operator*(infint& b) 
+
+infint infint::operator+=(infint& b) 
 {
-    return BigMutiple(number, b.number);
+    infint tmp(BigIneger(number, b.number));
+	return tmp;
 }
 
-string infint::operator*=(infint& b) 
+infint infint::operator-=(infint& b) 
 {
-    return BigMutiple(number, b.number);
+    infint tmp(BigIneger(number, b.number));
+	return tmp;
 }
 
-string infint::operator=(infint& b) 
+infint infint::operator*(infint& b) 
+{
+    infint tmp(BigMutiple(number, b.number));
+	return tmp;
+}
+
+infint infint::operator*=(infint& b) 
+{
+	infint tmp(BigMutiple(number, b.number));
+	return tmp;
+}
+
+infint infint::operator=(infint b) 
 {
     if (&b == this) 
     {
-        return this->number;
+        return *this;
     }
-    number = b.number;
-    return this->number;
+	infint tmp(b.number);
+    return tmp;
 }
 
-ostream& operator<<(ostream& out, infint& b) 
+infint infint::operator++() 
+{
+    number = BigIneger(number, "1");
+	return *this;
+}
+
+ostream& operator<<(ostream& out, infint b) 
 {
     out << b.number;
     return out;
 }
 
+int main()
+{
+	string a, b;
+	while (cin >> a >> b) 
+	{
+		infint c(a), d(b);
+		cout << "c + d = " << (c + d) << endl;
+		cout << "c += d " << (c+=d)<< endl;
+		cout << "c - d = " << (c - d) << endl;
+		//cout << "c++ =" << (++c) << endl;
+		cout << "c * d = " << (c * d) << endl;
+		cout << "c *= d " << (c*=d) << endl;
+
+	}
+}
