@@ -27,7 +27,7 @@ double RTriangle::getArea()
 }
 double RTriangle::getPerimeter() 
 {
-    return (a + b + sqrt(pow(a, b)));
+    return (a + b + sqrt(pow(a, 2) + pow(b, 2)));
 }
 
 int main()

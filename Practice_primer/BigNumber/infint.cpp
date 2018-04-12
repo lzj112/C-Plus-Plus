@@ -17,7 +17,7 @@ public:
     string BigMutiple(string s1, string s2);//相乘
     infint operator+(infint& b);
     infint operator-(infint& b);
-    infint operator++();
+    const infint operator++(int);
     infint operator+=(infint& b);
     infint operator-=(infint& b);
     infint operator*(infint& b);
@@ -305,7 +305,7 @@ infint infint::operator=(infint b)
     return tmp;
 }
 
-infint infint::operator++() 
+const infint infint::operator++(int) 
 {
     number = BigIneger(number, "1");
 	return *this;
@@ -326,9 +326,9 @@ int main()
 		cout << "c + d = " << (c + d) << endl;
 		cout << "c += d " << (c+=d)<< endl;
 		cout << "c - d = " << (c - d) << endl;
-		//cout << "c++ =" << (++c) << endl;
 		cout << "c * d = " << (c * d) << endl;
 		cout << "c *= d " << (c*=d) << endl;
-
+		c++;
+		cout << "c++ =" << c << endl;
 	}
 }
