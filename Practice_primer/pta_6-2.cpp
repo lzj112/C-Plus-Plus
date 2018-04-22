@@ -5,7 +5,7 @@ class shape {
 public:
 double getArea(){ return -1; };
 
-double getPerimeter(){ return -1 };
+double getPerimeter(){ return -1; };
 
 };
 

@@ -2,13 +2,15 @@
 using namespace std;
 class a 
 {
-private:
-    int aa;
 public:
-    a(int tmp) {aa = tmp;}
+    void show() {}
 };
-class b : public a 
+void a::show() 
 {
-private:
-    
+    cout << "here\n";
+}
+int main() 
+{
+    a aa;
+    aa.show();
 }
