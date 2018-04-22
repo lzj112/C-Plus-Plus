@@ -21,6 +21,10 @@ public:
 
 tree::tree() {}
 
+//由于blockchain里面都merkle运算要求叶子节点是偶数，所以，当一个区块内包含当交易数量为奇数时，
+//把最后一个交易复制一份，凑成偶数。
+
+
 int tree::makeBinary(vector<node*> &node_vector) //使叶子节点成为双数
 {
     int vectSize = node_vector.size();
