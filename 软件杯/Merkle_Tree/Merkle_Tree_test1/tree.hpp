@@ -21,10 +21,28 @@ public:
 
 tree::tree() {}
 
+void tree::buildBaseLeafes(vector<string> base_leafs) //建立叶子节点列表
+{
+    vector<node*> new_nodes;
+    
+    cout << "Root leafs are : " << '\n';
+
+    //给每一个字符串创建对应节点，并通过这个字符串设置哈希值
+    for (auto leaf : base_leafs) 
+    {
+        node* new_node = new node;
+        new_node->setHash(leaf);
+        cout << new_node->getHash() << '\n';
+
+        new_nodes.push_back(new_node);
+    }
+
+    base.push_back(new_nodes);
+    cout << '\n';
+}
+
 //由于blockchain里面都merkle运算要求叶子节点是偶数，所以，当一个区块内包含当交易数量为奇数时，
 //把最后一个交易复制一份，凑成偶数。
-
-
 int tree::makeBinary(vector<node*> &node_vector) //使叶子节点成为双数
 {
     int vectSize = node_vector.size();
@@ -69,7 +87,7 @@ void tree::buildTree() //建造merkle tree
 
         cout << "Hashed level with: " << base.end()[-1].size() << '\n';
     }
-    while (base.end()[-1].size() > 1); //这样每一轮得到新一层的父节点，知道得到根节点 退出循环
+    while (base.end()[-1].size() > 1); //这样每一轮得到新一层的父节点，直到得到根节点 退出循环
 
     merkleRoot = base.end()[-1][0]->getHash(); //根节点的哈希值
 
@@ -83,25 +101,6 @@ void tree::printTreeLevel(vector<node*> v) //打印每个节点的哈希值
   {
     cout << el->getHash() << endl;
   }
-}
-void tree::buildBaseLeafes(vector<string> base_leafs) //建立叶子节点列表
-{
-    vector<node*> new_nodes;
-    
-    cout << "Root leafs are : " << '\n';
-
-    //给每一个字符串创建对应节点，并通过这个字符串设置哈希值
-    for (auto leaf : base_leafs) 
-    {
-        node* new_node = new node;
-        new_node->setHash(leaf);
-        cout << new_node->getHash() << '\n';
-
-        new_nodes.push_back(new_node);
-    }
-
-    base.push_back(new_nodes);
-    cout << '\n';
 }
 
 int tree::verify(string hash) 
