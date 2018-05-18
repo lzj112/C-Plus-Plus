@@ -1,31 +1,33 @@
 #include "block.h"
-#include<iostream>
+#include "md5.h"
 #include<time.h>
 #include<cstdlib>
 #include<cstring>
 #include<string>
 #include<vector>
-#include<queue>
-using namespace std;
 
 Block::Block(int index, string prehash) 
 {
     PreHash = prehash;
-    Data = Input();
     Index = index;
     TimeStamp = GetTime();
     Hash = GetHash();
 }
 string Block::GetHash() 
 {
-
+    string tmp;
+    tmp = PreHash + Data + TimeStamp + to_string(Index);
+    unsigned char* t = (unsigned char*)tmp.data();
+    MD5 md5;
+    md5.GenerateMD5(t, tmp.size());
+    return md5.ToString();
 }
-string Block::Input() 
+void Block::Input() 
 {
     string str;
-    cout << "输入数据 ： \n";
+    cout << "输入数据 ： " ;
     cin >> str;
-    return str; 
+    Data = str;
 }
 string Block::GetTime() 
 {
@@ -36,7 +38,6 @@ string Block::GetTime()
     local = localtime( &t );
     strftime( buf, 64, "%Y-%m-%d %H:%M:%S",local );     //转换　buf里存时间
     string time(buf);
-    // cout << buf << endl;
     return time;
 
 }
