@@ -1,0 +1,9 @@
+auto的声明规则：
+（１）当不声明为指针或引用时，auto的推导结果和初始化表达式抛弃引用和cv（const volatile）限定符后类型一致
+（２）当声明为指针或引用时，auto的推导结果将保持初始化表达式的cv属性
+（注意：auto是不能用于函数参数的）　
+
+decltype(exp) 的推导规则
+（１）exp是标识符，类访问表达式，decltype(exp)和exp的类型一致
+（２）exp是函数调用，decltype(exp)和返回值的类型一致
+（３）其他情况，若exp是一个左值，则decltype(exp)是exp类型的左值引用，否则和exp类型一致 
