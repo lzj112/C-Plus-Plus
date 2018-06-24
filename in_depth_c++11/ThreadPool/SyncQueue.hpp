@@ -35,7 +35,7 @@ public:
             return ;
         }
         list = std::move(m_queue);  //将m_queue的资源直接移动给list
-        m_notFull.notify_one(); //唤醒一个线程拿到任务
+        m_notFull.notify_one(); //唤醒因为队列满而阻塞的添加任务的线程
     }
 
     //一次取一个任务，效率较低
@@ -124,7 +124,7 @@ private:
             return ;
         }
         m_queue.push_back(std::forward<F>(x));
-        m_notEmpty.notify_one(); 
+        m_notEmpty.notify_one(); //唤醒因队列空而阻塞的取任务的线程
     }
 
 private:

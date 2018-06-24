@@ -54,7 +54,7 @@ private:
         {
             //取任务分别执行
             std::list<Task> list;
-            m_queue.Take(list);
+            m_queue.Take(list);     //取任务，不成功即阻塞
 
             for (auto& task : list) 
             {
