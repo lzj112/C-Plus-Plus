@@ -54,7 +54,7 @@ public:
         return m_queue.empty();
     }
 
-    bool Full() 
+    bool Full()  
     {
         lock_guard<mute> locker(m_mutex);
         return m_queue.size() == m_maxSize;
@@ -77,4 +77,4 @@ private:
     condition_variable_any m_notEmpty;  //不为空的条件变量
     condition_variable_any m_notFull;   //没有满的条件变量
     int m_maxSize;          //同步队列最爱的size
-}
+};

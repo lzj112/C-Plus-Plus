@@ -3,7 +3,7 @@
 例子
 给定“abcabcbb”，答案是“abc”，长度为3。
 给定“bbbbb”，答案是“b”，长度为1。
-给定“pwwkew”，答案是“wke”，长度为3。注意，答案必须是子字符串，“pwke”是子字符串，而不是子字符串*/
+给定“pwwkew”，答案是“wke”，长度为3。注意，答案必须是子字符串，“pwke”是子序列，而不是子字符串*/
 #include <iostream>
 #include <string>
 using namespace std;
