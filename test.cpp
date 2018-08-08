@@ -1,16 +1,13 @@
-#include <iostream>
+/*************************************************************************
+	> File Name: test.cpp
+	> Author: 
+	> Mail: 
+	> Created Time: 2018年08月08日 星期三 08时29分11秒
+ ************************************************************************/
+
+#include<iostream>
 using namespace std;
-class a 
-{
-public:
-    void show() {}
-};
-void a::show() 
-{
-    cout << "here\n";
-}
 int main() 
 {
-    a aa;
-    aa.show();
+    cout << "?????" << endl;
 }
