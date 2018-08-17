@@ -86,5 +86,5 @@ private:
     std::list<std::shared_ptr<std::thread>> m_threadgroup;  //处理任务的线程组
     SyncQueue<Task> m_queue;        //同步队列
     atomic_bool m_running;          //是否停止的标志
-    std::once_flag m_flag;     
+    std::once_flag m_flag;      
 };

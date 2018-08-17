@@ -27,7 +27,7 @@ public:
     void Take(std::list<T>& list) 
     {
         std::unique_lock<std::mutex> locker(m_mutex);
-        //wait条件：执行或者队列为空
+        //wait条件：执行或者队列不为空
         m_notEmpty.wait(locker, [this]{return m_needStop || NotEmpty();}); 
 
         if (m_needStop) //如果为终止
@@ -71,7 +71,7 @@ public:
         std::lock_guard<std::mutex> locker(m_mutex);
         return m_queue.empty();
     }
-
+ 
     //判断队列是否满了
     bool Full() 
     {
