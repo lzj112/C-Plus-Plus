@@ -7,36 +7,26 @@ using namespace std;
 
 int num = 0;
 
-void fun1() 
+class A 
 {
-    mutex lock1;
-    lock1.lock();
-    while (1)
+public:
+    static void show(int a) 
     {
-        num++;
-        cout << num << "******here is fun1" << endl;
-        sleep(1);
+        cout << a << endl;
     }
-    lock1.unlock();
-}
+};
 
-void fun2() 
+class B 
 {
-    mutex lock2;
-    lock2.lock();
-    while (1)
+public:
+    void show(int a) 
     {
-        num++;
-        cout << num << "------------here is fun2" << endl;
-        sleep(1);
+        A::show(a);
     }
-    lock2.unlock();
-}
+};
+
 int main() 
-{ 
-    thread t1(fun1);
-    thread t2(fun2);
-
-    t1.join();
-    t2.join();
-} 
+{
+    B b;
+    b.show(10);
+}
