@@ -1,48 +1,27 @@
-#include <iostream>
+#include <set>
+#include <map>
 #include <vector>
-#include <list>
-#include <queue>
 #include <memory>
-#include <string>
-#include <algorithm>
+#include <utility>
+#include <iostream>
+#include <unordered_set>
+#include <unordered_map>
 using namespace std;
 
-struct listNode
+int main()
 {
-    listNode(int v) : val(v) {}
-    int val;
-    listNode* next;
-};
 
-listNode* func(listNode* root) 
-{
-    if (root == nullptr)
-        return nullptr;
-    listNode* preNode = nullptr;
-    listNode* nextNode = root->next;
-
-    while (root != nullptr) 
-    {
-        root->next = preNode;
-        preNode = root;
-        root = nextNode;
-        if (nextNode != nullptr)
-            nextNode = nextNode->next;
-    }
-    return preNode;
-}
-
-int main() 
-{
-    listNode* root = new listNode(1);
-    root->next = new listNode(2);
-    root->next->next = new listNode(3);
-
-    listNode* r = func(root);
-
-    while (r != nullptr)
-    {
-        cout << r->val << endl;
-        r = r->next;
-    }
+    auto ptr1 = make_shared<int> (5);
+    auto ptr2 = ptr1;   
+    unordered_set<shared_ptr<int> > s1;
+    s1.insert(ptr1);
+    s1.insert(ptr2);
+    cout << s1.size() << endl;
+    
+    int* ptr_1 = new int(10);
+    int* ptr_2 = ptr_1;
+    unordered_set<int *> s2;
+    s2.insert(ptr_1);
+    s2.insert(ptr_2);
+    cout << s2.size() << endl;
 }
