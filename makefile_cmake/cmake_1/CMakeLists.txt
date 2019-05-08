@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 3.0)
-project (hello_world)
+project (test_1)
 
 #把src目录下所有源文件路径放到变量hello_src中
 #aux_source_directory不会递归包含子目录,仅包含制定的dir目录
@@ -9,7 +9,7 @@ aux_source_directory(${CMAKE_CURRENT_LIST_DIR}/src/world SOURCE_WORLD)
 
 add_definitions("-g -Wall -std=c++11")
 
-add_executable(hello_world 
+add_executable(main
                ${CMAKE_CURRENT_LIST_DIR}/src/main.cpp
                ${SOURCE_HELLO}
                ${SOURCE_WORLD})
